@@ -14,7 +14,7 @@ class DynamicArray(object):
             self._shape = array_or_shape.shape[1:]
             self._dtype = array_or_shape.dtype
             self._size = array_or_shape.shape[0]
-            self._capacity = np.max(self._size, capacity)
+            self._capacity = max(self._size, capacity)
 
         self._data = np.empty((self._capacity,) + self._shape,
                               dtype=self._dtype)
@@ -33,12 +33,7 @@ class DynamicArray(object):
     def _grow(self, new_size):
 
         self._capacity = new_size
-
-        new_data = np.empty((self._capacity,) + self._shape,
-                            dtype=self._dtype)
-        new_data[:self._size] = self._data
-
-        self._data = new_data
+        self._data.resize((self._capacity,) + self._shape)
 
     def _as_dtype(self, value):
 
@@ -77,8 +72,8 @@ class DynamicArray(object):
         required_size = self._size + values.shape[0]
 
         if required_size >= self._capacity:
-            self._grow(np.max(self._capacity * 2,
-                              required_size))
+            self._grow(max(self._capacity * 2,
+                           required_size))
 
         self._data[self._size:required_size] = values
         self._size = required_size
