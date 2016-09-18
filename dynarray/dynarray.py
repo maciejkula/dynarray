@@ -3,6 +3,33 @@ import numpy as np
 
 class DynamicArray(object):
 
+    MAGIC_METHODS = ('__radd__',
+                     '__add__',
+                     '__sub__',
+                     '__rsub__',
+                     '__mul__',
+                     '__rmul__',
+                     '__div__',
+                     '__rdiv__',
+                     '__pow__',
+                     '__rpow__',
+                     '__eq__')
+
+    class __metaclass__(type):
+        def __init__(cls, name, parents, attrs):
+
+            def make_delegate(name):
+
+                def delegate(self, *args, **kwargs):
+                    return getattr(self._data[:self._size], name)
+
+                return delegate
+
+            type.__init__(cls, name, parents, attrs)
+
+            for method_name in cls.MAGIC_METHODS:
+                setattr(cls, method_name, property(make_delegate(method_name)))
+
     def __init__(self, array_or_shape, dtype=None, capacity=10):
 
         if isinstance(array_or_shape, tuple):
@@ -33,7 +60,7 @@ class DynamicArray(object):
     def _grow(self, new_size):
 
         self._capacity = new_size
-        self._data.resize((self._capacity,) + self._shape)
+        self._data = np.resize(self._data, ((self._capacity,) + self._shape))
 
     def _as_dtype(self, value):
 
@@ -81,3 +108,10 @@ class DynamicArray(object):
     def shrink_to_fit(self):
 
         self._grow(self._size)
+
+    def __repr__(self):
+
+        return (self._data[:self._size].__repr__()
+                .replace('array',
+                         'DynamicArray(size={}, capacity={})'
+                         .format(self._size, self._capacity)))
