@@ -6,8 +6,6 @@ from hypothesis.extra.numpy import arrays
 
 import numpy as np
 
-import pytest
-
 from dynarray import DynamicArray
 
 
@@ -39,7 +37,7 @@ def test_appending(source_array):
 
     array = DynamicArray(input_arg, dtype)
 
-    ref = array[:]
+    _ = array[:]  # NOQA
 
     for row in source_array:
         array.append(row)
@@ -59,7 +57,7 @@ def test_appending_lists(source_array):
 
     array = DynamicArray(input_arg, dtype)
 
-    ref = array[:]
+    _ = array[:]  # NOQA
 
     for row in source_array:
         row_list = row.tolist()
@@ -169,7 +167,7 @@ def test_attr_delegation(source_array):
         assert_equal_or_nan(array ** 2,
                             source_array ** 2)
     except TypeError:
-        assert (array ** 2,
+        assert (array ** 2 ==
                 source_array ** 2)
 
     # In-place operators

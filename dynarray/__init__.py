@@ -1,1 +1,1 @@
-from dynarray import DynamicArray
+from dynarray import DynamicArray  # NOQA
