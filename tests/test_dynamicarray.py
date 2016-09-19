@@ -1,6 +1,6 @@
 import itertools
 
-from hypothesis import given
+from hypothesis import HealthCheck, given, settings
 from hypothesis.strategies import integers, lists, sampled_from
 from hypothesis.extra.numpy import arrays
 
@@ -29,6 +29,7 @@ def assert_equal_or_nan(x, y):
                                 np.isnan(x)))
 
 
+@settings(suppress_health_check=[HealthCheck.too_slow])
 @given(arrays_strategy())
 def test_appending(source_array):
 
@@ -49,6 +50,7 @@ def test_appending(source_array):
         assert np.all(array[:] == source_array)
 
 
+@settings(suppress_health_check=[HealthCheck.too_slow])
 @given(arrays_strategy())
 def test_appending_lists(source_array):
 
@@ -75,6 +77,7 @@ def test_appending_lists(source_array):
         assert np.all(array[:] == source_array)
 
 
+@settings(suppress_health_check=[HealthCheck.too_slow])
 @given(arrays_strategy())
 def test_extending(source_array):
 
@@ -95,6 +98,7 @@ def test_extending(source_array):
         assert np.all(array[:] == comparison_array)
 
 
+@settings(suppress_health_check=[HealthCheck.too_slow])
 @given(arrays_strategy())
 def test_array_constructor(source_array):
 
@@ -107,6 +111,7 @@ def test_array_constructor(source_array):
         assert np.all(array[:] == source_array)
 
 
+@settings(suppress_health_check=[HealthCheck.too_slow])
 @given(arrays_strategy())
 def test_extending_array_constructor(source_array):
 
@@ -125,6 +130,7 @@ def test_extending_array_constructor(source_array):
         assert np.all(array[:] == comparison_array)
 
 
+@settings(suppress_health_check=[HealthCheck.too_slow])
 @given(arrays_strategy())
 def test_attr_delegation(source_array):
 
