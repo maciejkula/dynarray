@@ -1,0 +1,11 @@
+dependencies:
+  pre:
+    - pip install numpy
+test:
+  pre:
+    - pip install "hypothesis[numpy]"
+    - pip install pytest
+    - pip install flake8
+  override:
+    - flake8 --config .flake8rc
+    - py.test -xv tests
