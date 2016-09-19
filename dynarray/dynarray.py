@@ -30,7 +30,7 @@ class DynamicArray(object):
             for method_name in cls.MAGIC_METHODS:
                 setattr(cls, method_name, property(make_delegate(method_name)))
 
-    def __init__(self, array_or_shape, dtype=None, capacity=10):
+    def __init__(self, array_or_shape=tuple(), dtype=None, capacity=10):
 
         if isinstance(array_or_shape, tuple):
             self._shape = array_or_shape
@@ -76,7 +76,7 @@ class DynamicArray(object):
         if value.shape != self._shape:
 
             value_unit_shaped = value.shape == (1,) or len(value.shape) == 0
-            self_unit_shaped = self._shape == (1,) or len(self.shape) == 0
+            self_unit_shaped = self._shape == (1,) or len(self._shape) == 0
 
             if value_unit_shaped and self_unit_shaped:
                 pass
