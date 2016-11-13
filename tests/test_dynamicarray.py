@@ -36,7 +36,7 @@ def test_appending(source_array):
     dtype = source_array.dtype
     input_arg = source_array.shape[1:]
 
-    array = DynamicArray(input_arg, dtype)
+    array = DynamicArray(input_arg, dtype, allow_views_on_resize=True)
 
     _ = array[:]  # NOQA
 
@@ -52,12 +52,32 @@ def test_appending(source_array):
 
 @settings(suppress_health_check=[HealthCheck.too_slow])
 @given(arrays_strategy())
-def test_appending_lists(source_array):
+def test_appending_with_views_fails(source_array):
 
     dtype = source_array.dtype
     input_arg = source_array.shape[1:]
 
     array = DynamicArray(input_arg, dtype)
+    array.shrink_to_fit()  # Force a reallocation on first append
+
+    _ = array[:]  # NOQA
+
+    try:
+        for row in source_array:
+            array.append(row)
+        assert False, 'An exception should have been raised.'
+    except ValueError as e:
+        assert 'allow_views_on_resize' in e.message
+
+
+@settings(suppress_health_check=[HealthCheck.too_slow])
+@given(arrays_strategy())
+def test_appending_lists(source_array):
+
+    dtype = source_array.dtype
+    input_arg = source_array.shape[1:]
+
+    array = DynamicArray(input_arg, dtype, allow_views_on_resize=True)
 
     _ = array[:]  # NOQA
 

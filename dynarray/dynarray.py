@@ -30,7 +30,8 @@ class DynamicArray(object):
             for method_name in cls.MAGIC_METHODS:
                 setattr(cls, method_name, property(make_delegate(method_name)))
 
-    def __init__(self, array_or_shape=tuple(), dtype=None, capacity=10):
+    def __init__(self, array_or_shape=tuple(), dtype=None, capacity=10,
+                 allow_views_on_resize=False):
 
         if isinstance(array_or_shape, tuple):
             self._shape = array_or_shape
@@ -49,6 +50,8 @@ class DynamicArray(object):
         if isinstance(array_or_shape, np.ndarray):
             self[:] = array_or_shape
 
+        self._allow_views_on_resize = allow_views_on_resize
+
     def __getitem__(self, idx):
 
         return self._data[:self._size][idx]
@@ -59,8 +62,24 @@ class DynamicArray(object):
 
     def _grow(self, new_size):
 
+        try:
+            self._data.resize(((new_size,) + self._shape))
+        except ValueError as e:
+            if 'an array that references' in e.message:
+                if self._allow_views_on_resize:
+                    self._data = np.resize(self._data, ((new_size,) + self._shape))
+                else:
+                    raise ValueError('Unable to grow the array '
+                                     'as it refrences or is referenced '
+                                     'by another array. Growing the array '
+                                     'would result in views pointing at stale data. '
+                                     'You can suppress this exception by setting '
+                                     '`allow_views_on_resize=True` when instantiating '
+                                     'a DynamicArray.')
+            else:
+                raise
+
         self._capacity = new_size
-        self._data = np.resize(self._data, ((self._capacity,) + self._shape))
 
     def _as_dtype(self, value):
 
@@ -86,7 +105,7 @@ class DynamicArray(object):
                                                          self._shape))
 
         if self._size == self._capacity:
-            self._grow(self._capacity * 2)
+            self._grow(max(1, self._capacity * 2))
 
         self._data[self._size] = value
 
