@@ -74,7 +74,8 @@ class DynamicArray(object):
         except ValueError as e:
             if 'an array that references' in e.message:
                 if self._allow_views_on_resize:
-                    self._data = np.resize(self._data, ((new_size,) + self._get_trailing_dimensions()))
+                    self._data = np.resize(self._data,
+                                           ((new_size,) + self._get_trailing_dimensions()))
                 else:
                     raise ValueError('Unable to grow the array '
                                      'as it refrences or is referenced '
