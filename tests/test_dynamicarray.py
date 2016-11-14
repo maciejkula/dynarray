@@ -31,6 +31,23 @@ def assert_equal_or_nan(x, y):
 
 @settings(suppress_health_check=[HealthCheck.too_slow])
 @given(arrays_strategy())
+def test_shape(source_array):
+
+    array = DynamicArray(source_array)
+
+    assert array.shape == source_array.shape
+
+
+def test_explicit_dtype_overrides_input_dtype():
+
+    source = np.zeros(10, dtype=np.float64)
+    array = DynamicArray(source, dtype=np.float16)
+
+    assert array[:].dtype == np.float16
+
+
+@settings(suppress_health_check=[HealthCheck.too_slow])
+@given(arrays_strategy())
 def test_appending(source_array):
 
     dtype = source_array.dtype

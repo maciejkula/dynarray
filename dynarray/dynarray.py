@@ -43,7 +43,7 @@ class DynamicArray(object):
             self._capacity = capacity
         elif isinstance(array_or_shape, np.ndarray):
             self._shape = (None,) + array_or_shape.shape[1:]
-            self._dtype = array_or_shape.dtype
+            self._dtype = dtype or array_or_shape.dtype
             self._size = array_or_shape.shape[0]
             self._capacity = max(self._size, capacity)
 
@@ -135,6 +135,16 @@ class DynamicArray(object):
     def shrink_to_fit(self):
 
         self._grow(self._size)
+
+    @property
+    def shape(self):
+
+        return (self._size,) + self._get_trailing_dimensions()
+
+    @property
+    def capacity(self):
+
+        return self._capacity
 
     def __repr__(self):
 
