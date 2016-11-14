@@ -34,7 +34,7 @@ def assert_equal_or_nan(x, y):
 def test_appending(source_array):
 
     dtype = source_array.dtype
-    input_arg = source_array.shape[1:]
+    input_arg = (None,) + source_array.shape[1:]
 
     array = DynamicArray(input_arg, dtype, allow_views_on_resize=True)
 
@@ -55,7 +55,7 @@ def test_appending(source_array):
 def test_appending_with_views_fails(source_array):
 
     dtype = source_array.dtype
-    input_arg = source_array.shape[1:]
+    input_arg = (None,) + source_array.shape[1:]
 
     array = DynamicArray(input_arg, dtype)
     array.shrink_to_fit()  # Force a reallocation on first append
@@ -75,7 +75,7 @@ def test_appending_with_views_fails(source_array):
 def test_appending_lists(source_array):
 
     dtype = source_array.dtype
-    input_arg = source_array.shape[1:]
+    input_arg = (None,) + source_array.shape[1:]
 
     array = DynamicArray(input_arg, dtype, allow_views_on_resize=True)
 
@@ -102,7 +102,7 @@ def test_appending_lists(source_array):
 def test_extending(source_array):
 
     dtype = source_array.dtype
-    input_arg = source_array.shape[1:]
+    input_arg = (None,) + source_array.shape[1:]
 
     array = DynamicArray(input_arg, dtype)
 

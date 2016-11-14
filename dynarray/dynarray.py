@@ -30,27 +30,34 @@ class DynamicArray(object):
             for method_name in cls.MAGIC_METHODS:
                 setattr(cls, method_name, property(make_delegate(method_name)))
 
-    def __init__(self, array_or_shape=tuple(), dtype=None, capacity=10,
+    def __init__(self, array_or_shape=(None,), dtype=None, capacity=10,
                  allow_views_on_resize=False):
 
         if isinstance(array_or_shape, tuple):
+            if not len(array_or_shape) or array_or_shape[0] is not None:
+                raise ValueError('The shape argument must be a non-empty tuple '
+                                 'and have None as the first dimension')
             self._shape = array_or_shape
             self._dtype = dtype
             self._size = 0
             self._capacity = capacity
         elif isinstance(array_or_shape, np.ndarray):
-            self._shape = array_or_shape.shape[1:]
+            self._shape = (None,) + array_or_shape.shape[1:]
             self._dtype = array_or_shape.dtype
             self._size = array_or_shape.shape[0]
             self._capacity = max(self._size, capacity)
 
-        self._data = np.empty((self._capacity,) + self._shape,
+        self._data = np.empty((self._capacity,) + self._get_trailing_dimensions(),
                               dtype=self._dtype)
 
         if isinstance(array_or_shape, np.ndarray):
             self[:] = array_or_shape
 
         self._allow_views_on_resize = allow_views_on_resize
+
+    def _get_trailing_dimensions(self):
+
+        return self._shape[1:]
 
     def __getitem__(self, idx):
 
@@ -63,11 +70,11 @@ class DynamicArray(object):
     def _grow(self, new_size):
 
         try:
-            self._data.resize(((new_size,) + self._shape))
+            self._data.resize(((new_size,) + self._get_trailing_dimensions()))
         except ValueError as e:
             if 'an array that references' in e.message:
                 if self._allow_views_on_resize:
-                    self._data = np.resize(self._data, ((new_size,) + self._shape))
+                    self._data = np.resize(self._data, ((new_size,) + self._get_trailing_dimensions()))
                 else:
                     raise ValueError('Unable to grow the array '
                                      'as it refrences or is referenced '
@@ -92,17 +99,17 @@ class DynamicArray(object):
 
         value = self._as_dtype(value)
 
-        if value.shape != self._shape:
+        if value.shape != self._get_trailing_dimensions():
 
             value_unit_shaped = value.shape == (1,) or len(value.shape) == 0
-            self_unit_shaped = self._shape == (1,) or len(self._shape) == 0
+            self_unit_shaped = self._shape == (1,) or len(self._get_trailing_dimensions()) == 0
 
             if value_unit_shaped and self_unit_shaped:
                 pass
             else:
                 raise ValueError('Input shape {} incompatible with '
                                  'array shape {}'.format(value.shape,
-                                                         self._shape))
+                                                         self._get_trailing_dimensions()))
 
         if self._size == self._capacity:
             self._grow(max(1, self._capacity * 2))
