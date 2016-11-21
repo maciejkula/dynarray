@@ -12,6 +12,5 @@ setup(
     author='Maciej Kula',
     license='MIT',
     classifiers=['Development Status :: 3 - Alpha',
-                 'License :: OSI Approved :: MIT License',
-                 'Topic :: Scientific/Engineering :: Artificial Intelligence'],
+                 'License :: OSI Approved :: MIT License']
 )

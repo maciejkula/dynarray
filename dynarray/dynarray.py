@@ -69,7 +69,7 @@ class DynamicArray(object):
             for method_name in cls.MAGIC_METHODS:
                 setattr(cls, method_name, property(make_delegate(method_name)))
 
-    def __init__(self, array_or_shape=(None,), dtype=np.float32, capacity=10,
+    def __init__(self, array_or_shape=(None,), dtype=None, capacity=10,
                  allow_views_on_resize=False):
 
         if isinstance(array_or_shape, tuple):
