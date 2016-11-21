@@ -5,6 +5,11 @@
 
 Dynamically growable Numpy arrays. They function exactly like normal numpy arrays, but support appending new elements.
 
+# Installation
+
+Simply install from PyPI: `pip install dynarray`
+
+
 # Quickstart
 
 Create an empty one-dimensional array and append elements to it:
