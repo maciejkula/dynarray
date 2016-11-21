@@ -2,6 +2,45 @@ import numpy as np
 
 
 class DynamicArray(object):
+    """
+    Dynamically growable numpy array.
+
+    Parameters
+    ----------
+
+    array_or_shape: numpy array or tuple
+        If an array, a growable array with the same shape, dtype,
+        and a copy of the data will be created. The array will grow
+        along the first dimension.
+        If a tuple, en empty array of the specified shape will be created.
+        The first element needs to be None to denote that the array will
+        grow along the first dimension.
+    dtype: optional, array dtype
+        The dtype the array should have.
+    capacity: optional, int
+        The initial capacity of the array.
+    allow_views_on_resize: optional, boolean
+        If False, an exception will be thrown if the array is resized
+        while there are live references to the array's contents. When
+        the array is resized, these will point at old data. Set to
+        True if you want to silence the exception.
+
+    Examples
+    --------
+
+    Create a multidimensional array and append rows:
+
+    >>> from dynarray import DynamicArray
+    >>> # The leading dimension is None to denote that this is
+    >>> # the dynamic dimension
+    >>> array = DynamicArray((None, 20, 10))
+    >>> array.append(np.random.random((20, 10)))
+    >>> array.extend(np.random.random((100, 20, 10)))
+
+    Slice and perform arithmetic like with normal numpy arrays:
+
+    >>> array[:2]
+    """
 
     MAGIC_METHODS = ('__radd__',
                      '__add__',
@@ -30,7 +69,7 @@ class DynamicArray(object):
             for method_name in cls.MAGIC_METHODS:
                 setattr(cls, method_name, property(make_delegate(method_name)))
 
-    def __init__(self, array_or_shape=(None,), dtype=None, capacity=10,
+    def __init__(self, array_or_shape=(None,), dtype=np.float32, capacity=10,
                  allow_views_on_resize=False):
 
         if isinstance(array_or_shape, tuple):
@@ -97,6 +136,11 @@ class DynamicArray(object):
             return np.array(value).astype(self._dtype)
 
     def append(self, value):
+        """
+        Append a row to the array.
+
+        The row's shape has to match the array's trailing dimensions.
+        """
 
         value = self._as_dtype(value)
 
@@ -120,6 +164,12 @@ class DynamicArray(object):
         self._size += 1
 
     def extend(self, values):
+        """
+        Extend the array with a set of rows.
+
+        The rows' dimensions must match the trailing dimensions
+        of the array.
+        """
 
         values = self._as_dtype(values)
 
@@ -133,6 +183,9 @@ class DynamicArray(object):
         self._size = required_size
 
     def shrink_to_fit(self):
+        """
+        Reduce the array's capacity to its size.
+        """
 
         self._grow(self._size)
 
