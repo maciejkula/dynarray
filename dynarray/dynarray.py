@@ -52,7 +52,8 @@ class DynamicArray(object):
                      '__rdiv__',
                      '__pow__',
                      '__rpow__',
-                     '__eq__')
+                     '__eq__',
+                     '__len__')
 
     class __metaclass__(type):
         def __init__(cls, name, parents, attrs):
@@ -133,7 +134,7 @@ class DynamicArray(object):
         if hasattr(value, 'dtype') and value.dtype == self._dtype:
             return value
         else:
-            return np.array(value).astype(self._dtype)
+            return np.array(value, dtype=self._dtype)
 
     def append(self, value):
         """

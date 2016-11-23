@@ -29,6 +29,22 @@ def assert_equal_or_nan(x, y):
                                 np.isnan(x)))
 
 
+def test_structured_array():
+
+    source_array = np.array([(1, 2.0, 'Hello'),
+                             (2, 3.0, 'World')],
+                            dtype=[('foo', 'i4'),
+                                   ('bar', 'f4'),
+                                   ('baz', 'S10')])
+
+    array = DynamicArray(source_array)
+
+    assert array.shape == source_array.shape
+
+    for _ in range(4):
+        array.append(source_array[0].tolist())
+
+
 @settings(suppress_health_check=[HealthCheck.too_slow])
 @given(arrays_strategy())
 def test_shape(source_array):
