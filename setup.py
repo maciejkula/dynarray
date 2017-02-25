@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='dynarray',
-    version='0.1.1',
+    version='0.1.2',
     description='Dynamically growable numpy arrays.',
     url='https://github.com/maciejkula/dynarray',
     download_url='https://github.com/maciejkula/dynarray/tarball/0.1.0',
