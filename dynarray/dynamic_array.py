@@ -200,6 +200,10 @@ class DynamicArray(object):
 
         return self._capacity
 
+    def __len__(self):
+
+        return self.shape[0]
+
     def __repr__(self):
 
         return (self._data[:self._size].__repr__()
