@@ -2,10 +2,10 @@ from setuptools import setup
 
 setup(
     name='dynarray',
-    version='0.1.2',
+    version='0.1.3',
     description='Dynamically growable numpy arrays.',
     url='https://github.com/maciejkula/dynarray',
-    download_url='https://github.com/maciejkula/dynarray/tarball/0.1.0',
+    download_url='https://github.com/maciejkula/dynarray/tarball/0.1.3',
     packages=['dynarray'],
     install_requires=['numpy'],
     tests_require=['pytest', 'hypothesis[numpy]'],
